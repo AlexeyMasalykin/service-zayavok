@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Вход администратора{% endblock %}
+{% block content %}
+<div class="ui-head">
+  <h2 class="mb-1">Вход администратора</h2>
+  <div class="text-secondary">Введите логин и пароль.</div>
+</div>
+
+<div class="ui-card">
+  {% if error %}
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+    </div>
+  {% endif %}
+  
+  <form method="post" class="d-grid gap-3">
+    <input class="form-control form-control-lg" name="username" placeholder="Логин" required>
+    <input class="form-control form-control-lg" type="password" name="password" placeholder="Пароль" required>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary btn-lg">Войти</button>
+      <a class="btn btn-outline-secondary btn-lg" href="{{ url_for('home') }}">Назад</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

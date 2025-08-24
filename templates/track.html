@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Отследить заявку - Сервис заявок{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="ui-head">
+      <h2 class="mb-3">Отследить статус заявки</h2>
+      <p class="text-secondary">Введите номер заявки для получения актуальной информации о её статусе</p>
+    </div>
+
+    <div class="ui-card">
+      <form method="post" class="mb-4">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text bg-primary text-white">
+            <i class="bi bi-search"></i>
+          </span>
+          <input class="form-control" name="app_id" placeholder="Введите номер заявки (например: 123)" required>
+          <button class="btn btn-primary shadow-colored" type="submit">
+            <i class="bi bi-arrow-right me-1"></i>Найти
+          </button>
+        </div>
+      </form>
+
+      {% if record %}
+        <div class="ui-subcard border-gradient">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">
+              <i class="bi bi-file-earmark-check me-2 text-success"></i>
+              Информация о заявке
+            </h6>
+            <span class="badge bg-primary-subtle text-primary">#{{ record.id }}</span>
+          </div>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-flag text-primary"></i>
+                <span class="text-muted small">Статус заявки:</span>
+              </div>
+              {% set status_colors = {
+                'новая': 'primary',
+                'в работе': 'warning', 
+                'утверждена': 'success',
+                'отклонена': 'danger',
+                'исполнена': 'info'
+              } %}
+              <span class="badge bg-{{ status_colors.get(record.status, 'secondary') }}-subtle text-{{ status_colors.get(record.status, 'secondary') }} fs-6 px-3 py-2">
+                {{ record.status.title() }}
+              </span>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-calendar3 text-primary"></i>
+                <span class="text-muted small">Дата подачи:</span>
+              </div>
+              <div class="fw-semibold">
+                {{ (record.submitted_at|moscow_time).strftime('%d.%m.%Y в %H:%M') if record.submitted_at else 'Не указана' }}
+              </div>
+            </div>
+            
+            {% if record.name %}
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-person text-primary"></i>
+                <span class="text-muted small">Заявитель:</span>
+              </div>
+              <div class="fw-semibold">{{ record.name }}</div>
+            </div>
+            {% endif %}
+            
+            {% if record.rating %}
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-star text-primary"></i>
+                <span class="text-muted small">Рейтинг ИИ:</span>
+              </div>
+              {% set rating_class = 'success' if record.rating > 6 else 'warning' if record.rating > 3 else 'danger' %}
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-{{ rating_class }}-subtle text-{{ rating_class }} fw-bold">
+                  {{ '{:.1f}'.format(record.rating) }} / 10
+                </span>
+                <i class="bi bi-star-fill text-{{ rating_class }}"></i>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if record.ai_analysis %}
+            <div class="col-12">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-robot text-primary"></i>
+                <span class="text-muted small">ИИ-анализ заявки:</span>
+              </div>
+              <div class="bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded p-3">
+                <div style="white-space: pre-wrap;">{{ record.ai_analysis }}</div>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if record.note %}
+            <div class="col-12">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-chat-square-text text-primary"></i>
+                <span class="text-muted small">Примечание администратора:</span>
+              </div>
+              <div class="bg-info bg-opacity-10 border border-info border-opacity-25 rounded p-3">
+                {{ record.note }}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      {% elif record is not none %}
+        <div class="text-center py-4">
+          <i class="bi bi-search text-muted fs-1 mb-3"></i>
+          <h6 class="text-muted">Заявка не найдена</h6>
+          <p class="text-muted small mb-0">Проверьте правильность введённого номера</p>
+        </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-center gap-2 mt-4">
+        <a class="btn btn-outline-primary" href="{{ url_for('upload_file') }}">
+          <i class="bi bi-plus-circle me-1"></i>Подать новую заявку
+        </a>
+        <a class="btn btn-outline-secondary" href="{{ url_for('home') }}">
+          <i class="bi bi-house me-1"></i>На главную
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

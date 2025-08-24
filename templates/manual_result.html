@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Результат анализа заявки - Сервис заявок{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      
+      <!-- Заголовок -->
+      <div class="ui-head text-center mb-4">
+        <h2 class="text-gradient">✅ Заявка создана успешно!</h2>
+        <p class="text-secondary">Ваша заявка была обработана и проанализирована ИИ</p>
+      </div>
+
+      <!-- Информация о заявке -->
+      <div class="ui-card mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <div class="d-inline-flex align-items-center justify-content-center bg-success bg-gradient rounded-circle me-3" style="width: 48px; height: 48px;">
+            <i class="bi bi-check-circle text-white fs-4"></i>
+          </div>
+          <div>
+            <h5 class="mb-1">Заявка #{{ application_id }}</h5>
+            <p class="text-muted mb-0">{{ datetime.now().strftime('%d.%m.%Y в %H:%M') }}</p>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Инициатор:</strong> {{ application.name or 'Не указан' }}</p>
+            <p><strong>Email:</strong> {{ application.email or 'Не указан' }}</p>
+            <p><strong>Телефон:</strong> {{ application.phone or 'Не указан' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Корпус/филиал:</strong> {{ application.department or 'Не указан' }}</p>
+            <p><strong>Стоимость:</strong> {{ application.cost or 'Не указана' }}</p>
+            <p><strong>Общая сумма:</strong> {{ application.total_sum or 'Не указана' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ИИ-анализ -->
+      {% if application.rating and application.ai_analysis %}
+      <div class="ui-card mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-gradient rounded-circle me-3" style="width: 48px; height: 48px;">
+            <i class="bi bi-robot text-white fs-4"></i>
+          </div>
+          <div>
+            <h5 class="mb-1">ИИ-анализ качества заявки</h5>
+            <div class="d-flex align-items-center">
+              <span class="me-2">Рейтинг:</span>
+              {% set rating_class = 'success' if application.rating >= 7 else ('warning' if application.rating >= 4 else 'danger') %}
+              <span class="badge bg-{{ rating_class }}-subtle text-{{ rating_class }} fs-6">
+                {{ "%.1f"|format(application.rating) }}/10
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="alert alert-light border">
+          <div style="white-space: pre-wrap;">{{ application.ai_analysis }}</div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Таблица товаров -->
+      {% if application.items %}
+      <div class="ui-card mb-4">
+        <h5 class="mb-3">📦 Товары в заявке</h5>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Наименование</th>
+                <th>Характеристики</th>
+                <th>Ед. изм.</th>
+                <th>Кол-во</th>
+                <th>Цена</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in application.items %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.characteristics or '-' }}</td>
+                <td>{{ item.unit or '-' }}</td>
+                <td>{{ item.quantity or '-' }}</td>
+                <td>{{ item.price or '-' }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Действия -->
+      <div class="text-center">
+        <a href="{{ url_for('track_application') }}?id={{ application_id }}" class="btn btn-primary btn-lg me-2">
+          <i class="bi bi-search me-2"></i>Отследить заявку
+        </a>
+        <a href="{{ url_for('manual.manual_form') }}" class="btn btn-outline-secondary btn-lg me-2">
+          <i class="bi bi-plus-circle me-2"></i>Создать еще
+        </a>
+        <a href="{{ url_for('home') }}" class="btn btn-outline-primary btn-lg">
+          <i class="bi bi-house me-2"></i>На главную
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

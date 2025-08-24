@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Главная - Сервис заявок{% endblock %}
+{% block content %}
+
+<!-- Hero секция -->
+<div class="text-center mb-5">
+  <div class="ui-head">
+    <h1 class="display-4 fw-bold mb-4">
+      Умный сервис обработки заявок
+    </h1>
+    <p class="lead text-secondary mb-4">
+      Заполните заявку онлайн, получите мгновенный ИИ-анализ качества и автоматическую регистрацию в системе
+    </p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a class="btn btn-primary btn-lg shadow-colored" href="{{ url_for('manual.manual_form') }}">
+        <i class="bi bi-pencil-square me-2"></i>Подать заявку
+      </a>
+      <a class="btn btn-outline-primary btn-lg" href="{{ url_for('track_application') }}">
+        <i class="bi bi-search me-2"></i>Отследить заявку
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Преимущества -->
+<div class="row g-4 mb-5">
+  <div class="col-lg-4">
+    <div class="ui-card h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-gradient rounded-circle mb-3" style="width: 64px; height: 64px;">
+        <i class="bi bi-robot text-white fs-3"></i>
+      </div>
+      <h5 class="fw-bold mb-3">ИИ-анализ заявок</h5>
+      <p class="text-muted">Автоматическая оценка качества заявки от 0 до 10 баллов с детальными рекомендациями по улучшению</p>
+      <div class="mt-auto">
+        <span class="badge bg-primary-subtle text-primary">
+          <i class="bi bi-lightning me-1"></i>Мгновенно
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-4">
+    <div class="ui-card h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center bg-success bg-gradient rounded-circle mb-3" style="width: 64px; height: 64px;">
+        <i class="bi bi-file-earmark-check text-white fs-3"></i>
+      </div>
+      <h5 class="fw-bold mb-3">Онлайн заполнение</h5>
+      <p class="text-muted">Удобная форма с таблицей товаров, импортом из Excel и экспортом в Word</p>
+      <div class="mt-auto">
+        <span class="badge bg-success-subtle text-success">
+          <i class="bi bi-shield-check me-1"></i>Надежно
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-4">
+    <div class="ui-card h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-gradient rounded-circle mb-3" style="width: 64px; height: 64px;">
+        <i class="bi bi-pencil-square text-white fs-3"></i>
+      </div>
+      <h5 class="fw-bold mb-3">Гибкая система</h5>
+      <p class="text-muted">Любые единицы измерения, неограниченное количество товаров и услуг в одной заявке</p>
+      <div class="mt-auto">
+        <span class="badge bg-warning-subtle text-warning">
+          <i class="bi bi-gear me-1"></i>Гибко
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-4">
+    <div class="ui-card h-100 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center bg-info bg-gradient rounded-circle mb-3" style="width: 64px; height: 64px;">
+        <i class="bi bi-envelope-paper text-white fs-3"></i>
+      </div>
+      <h5 class="fw-bold mb-3">Уведомления и отчеты</h5>
+      <p class="text-muted">Email-уведомления заявителям об изменении статуса и подробные отчеты для администраторов</p>
+      <div class="mt-auto">
+        <span class="badge bg-info-subtle text-info">
+          <i class="bi bi-bell me-1"></i>Уведомления
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Статистика и быстрые действия -->
+<div class="row g-4 mb-5">
+  <div class="col-lg-8">
+    <div class="ui-card">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">
+          <i class="bi bi-speedometer2 me-2 text-primary"></i>
+          Как это работает
+        </h5>
+        <span class="badge bg-primary-subtle text-primary">Простые шаги</span>
+      </div>
+      
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle flex-shrink-0" style="width: 32px; height: 32px;">
+              <span class="fw-bold">1</span>
+            </div>
+            <div>
+              <h6 class="fw-semibold mb-1">Заполните форму</h6>
+              <p class="text-muted small mb-0">Откройте форму подачи заявки и заполните все поля</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle flex-shrink-0" style="width: 32px; height: 32px;">
+              <span class="fw-bold">2</span>
+            </div>
+            <div>
+              <h6 class="fw-semibold mb-1">Получите анализ</h6>
+              <p class="text-muted small mb-0">ИИ проанализирует качество заявки и даст рекомендации</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="d-flex align-items-center justify-content-center bg-success text-white rounded-circle flex-shrink-0" style="width: 32px; height: 32px;">
+              <span class="fw-bold">3</span>
+            </div>
+            <div>
+              <h6 class="fw-semibold mb-1">Автоматическая регистрация</h6>
+              <p class="text-muted small mb-0">Заявки с рейтингом выше 6 автоматически регистрируются</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex align-items-start gap-3">
+            <div class="d-flex align-items-center justify-content-center bg-info text-white rounded-circle flex-shrink-0" style="width: 32px; height: 32px;">
+              <span class="fw-bold">4</span>
+            </div>
+            <div>
+              <h6 class="fw-semibold mb-1">Отслеживание статуса</h6>
+              <p class="text-muted small mb-0">Получайте уведомления об изменениях по email</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-4">
+    <div class="ui-card h-100">
+      <div class="text-center">
+        <div class="d-inline-flex align-items-center justify-content-center bg-gradient rounded-circle mb-3" style="width: 80px; height: 80px; background: var(--bg-gradient);">
+          <i class="bi bi-graph-up-arrow text-white fs-2"></i>
+        </div>
+        <h5 class="fw-bold mb-3">Система активна</h5>
+        <p class="text-muted mb-4">Готова к обработке ваших заявок 24/7</p>
+        
+        <div class="d-grid gap-2">
+          <a class="btn btn-primary" href="{{ url_for('manual.manual_form') }}">
+            <i class="bi bi-plus-circle me-2"></i>Создать заявку
+          </a>
+          {% if session.get('admin') %}
+          <a class="btn btn-outline-secondary" href="{{ url_for('admin_panel') }}">
+            <i class="bi bi-shield-lock me-2"></i>Админ-панель
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Требования к документам -->
+<div class="ui-card border-gradient">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+              <h5 class="fw-bold mb-3">
+          <i class="bi bi-info-circle me-2 text-primary"></i>
+          Особенности системы
+        </h5>
+      <ul class="ui-list">
+        <li>
+          <i class="bi bi-pencil-square text-primary"></i>
+          <span><strong>Онлайн форма:</strong> удобное заполнение на сайте</span>
+        </li>
+        <li>
+          <i class="bi bi-file-earmark-excel text-success"></i>
+          <span><strong>Импорт Excel:</strong> загрузка таблицы товаров из Excel</span>
+        </li>
+        <li>
+          <i class="bi bi-check-circle text-success"></i>
+          <span><strong>Содержание:</strong> четкое описание товаров/услуг с характеристиками</span>
+        </li>
+        <li>
+          <i class="bi bi-list-ul text-info"></i>
+          <span><strong>Структура:</strong> таблицы с наименованиями, количеством и единицами измерения</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-lg-4 text-center">
+      <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-gradient rounded-circle" style="width: 100px; height: 100px;">
+        <i class="bi bi-award text-white" style="font-size: 2.5rem;"></i>
+      </div>
+      <div class="mt-3">
+        <div class="fw-bold text-gradient">Рейтинг > 6</div>
+        <small class="text-muted">Минимальный балл для принятия заявки</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}Подача заявки - Сервис заявок{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      
+      <!-- Заголовок -->
+      <div class="ui-head text-center mb-4">
+        <h2 class="text-gradient">📝 Подача заявки</h2>
+        <p class="text-secondary">Заполните форму онлайн или импортируйте таблицу из Excel</p>
+      </div>
+
+      <!-- Основная форма -->
+      <form id="manualForm" class="ui-card">
+        <div class="row">
+          
+          <!-- Левая колонка -->
+          <div class="col-md-6">
+            <h5 class="text-primary mb-3">📋 Основная информация</h5>
+            
+            <div class="mb-3">
+              <label class="form-label">Инициатор заявки (ФИО, должность) <span class="text-danger">*</span></label>
+              <input type="text" name="initiator" class="form-control" required placeholder="Иванов И.И., преподаватель">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Описание объекта закупки (кратко) <span class="text-danger">*</span></label>
+              <textarea name="description" class="form-control" rows="3" required placeholder="Краткое описание закупаемых товаров/услуг"></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Ориентировочная стоимость <span class="text-danger">*</span></label>
+              <input type="text" name="cost" class="form-control" required placeholder="15 000 руб.">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Номер телефона инициатора заявки <span class="text-danger">*</span></label>
+              <input type="tel" name="phone" class="form-control" required placeholder="+7 (___) ___-__-__">
+            </div>
+          </div>
+          
+          <!-- Правая колонка -->
+          <div class="col-md-6">
+            <h5 class="text-primary mb-3">📍 Контактная информация</h5>
+            
+            <div class="mb-3">
+              <label class="form-label">Адрес электронной почты <span class="text-danger">*</span></label>
+              <input type="email" name="email" class="form-control" required placeholder="example@email.com">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Корпус, филиал <span class="text-danger">*</span></label>
+              <input type="text" name="department" class="form-control" required placeholder="Основной корпус">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Общая сумма</label>
+              <input type="text" name="total_sum" class="form-control" placeholder="15 000 руб.">
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Обоснование закупки</label>
+              <textarea name="justification" class="form-control" rows="3" placeholder="Обоснование необходимости закупки"></textarea>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Таблица товаров -->
+        <div class="mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-primary mb-0">🛒 Объект закупки</h5>
+            <div>
+              <button type="button" class="btn btn-outline-success btn-sm me-2" onclick="addTableRow()">
+                <i class="bi bi-plus-circle"></i> Добавить строку
+              </button>
+              <label class="btn btn-outline-primary btn-sm me-2">
+                <i class="bi bi-file-earmark-excel"></i> Импорт из Excel
+                <input type="file" id="excelFile" accept=".xlsx,.xls" style="display: none;" onchange="importExcel()">
+              </label>
+              <a href="{{ url_for('manual.download_excel_template') }}" class="btn btn-outline-info btn-sm" title="Скачать образец Excel файла">
+                <i class="bi bi-download"></i> Скачать образец
+              </a>
+            </div>
+          </div>
+          
+          <div class="table-responsive">
+            <table id="itemsTable" class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th width="5%" class="text-center" style="white-space: nowrap; min-width: 40px;">№</th>
+                  <th width="20%" style="white-space: nowrap; min-width: 150px; padding: 8px 12px;">Наименование товара <span class="text-danger">*</span></th>
+                  <th width="25%" style="white-space: nowrap; min-width: 180px; padding: 8px 12px;">Характеристики</th>
+                  <th width="15%" style="white-space: nowrap; min-width: 120px; padding: 8px 12px;">Единица измерения</th>
+                  <th width="10%" class="text-center" style="white-space: nowrap; min-width: 80px; padding: 8px 12px;">Количество</th>
+                  <th width="15%" class="text-center" style="white-space: nowrap; min-width: 100px; padding: 8px 12px;">Цена за ед., руб</th>
+                  <th width="5%" class="text-center" style="white-space: nowrap; min-width: 50px; padding: 8px 4px;"><i class="bi bi-trash text-muted"></i></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td><textarea class="form-control form-control-sm item-name" placeholder="Название товара" required rows="2" style="resize: vertical; min-height: 38px;"></textarea></td>
+                  <td><textarea class="form-control form-control-sm item-characteristics" placeholder="Характеристики" rows="2" style="resize: vertical; min-height: 38px;"></textarea></td>
+                  <td><input type="text" class="form-control form-control-sm item-unit" placeholder="шт., кг, л, м², м.п., пачка, комплект" style="min-width: 120px;"></td>
+                  <td><input type="number" class="form-control form-control-sm item-quantity" placeholder="1" min="0"></td>
+                  <td><input type="number" class="form-control form-control-sm item-price" placeholder="0.00" min="0" step="0.01"></td>
+                  <td><button type="button" class="btn btn-outline-danger btn-sm" onclick="removeTableRow(this)" disabled><i class="bi bi-trash"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Подсказка для Excel -->
+          <div class="mt-2">
+            <small class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              <strong>Совет:</strong> Скачайте образец Excel файла, заполните его своими данными и импортируйте для быстрого заполнения таблицы.
+            </small>
+          </div>
+        </div>
+        
+        <!-- Кнопки -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="bi bi-check-circle"></i> Создать заявку
+          </button>
+          <a href="{{ url_for('home') }}" class="btn btn-outline-secondary btn-lg ms-2">
+            <i class="bi bi-arrow-left"></i> Назад
+          </a>
+        </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+let rowCounter = 1;
+
+function addTableRow() {
+  rowCounter++;
+  const tbody = document.querySelector('#itemsTable tbody');
+  const newRow = document.createElement('tr');
+  newRow.innerHTML = `
+    <td>${rowCounter}</td>
+    <td><textarea class="form-control form-control-sm item-name" placeholder="Название товара" required rows="2" style="resize: vertical; min-height: 38px;"></textarea></td>
+    <td><textarea class="form-control form-control-sm item-characteristics" placeholder="Характеристики" rows="2" style="resize: vertical; min-height: 38px;"></textarea></td>
+    <td><input type="text" class="form-control form-control-sm item-unit" placeholder="шт., кг, л, м², м.п., пачка, комплект" style="min-width: 120px;"></td>
+    <td><input type="number" class="form-control form-control-sm item-quantity" placeholder="1" min="0"></td>
+    <td><input type="number" class="form-control form-control-sm item-price" placeholder="0.00" min="0" step="0.01"></td>
+    <td><button type="button" class="btn btn-outline-danger btn-sm" onclick="removeTableRow(this)"><i class="bi bi-trash"></i></button></td>
+  `;
+  tbody.appendChild(newRow);
+  updateRowNumbers();
+}
+
+function removeTableRow(button) {
+  if (document.querySelectorAll('#itemsTable tbody tr').length > 1) {
+    button.closest('tr').remove();
+    updateRowNumbers();
+  }
+}
+
+function updateRowNumbers() {
+  const rows = document.querySelectorAll('#itemsTable tbody tr');
+  rows.forEach((row, index) => {
+    row.cells[0].textContent = index + 1;
+    // Обновляем состояние кнопки удаления
+    const deleteBtn = row.querySelector('.btn-outline-danger');
+    deleteBtn.disabled = rows.length === 1;
+  });
+}
+
+function importExcel() {
+  const fileInput = document.getElementById('excelFile');
+  const file = fileInput.files[0];
+  
+  if (!file) return;
+  
+  const formData = new FormData();
+  formData.append('excel_file', file);
+  
+  fetch('/import_excel', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Очищаем таблицу
+      const tbody = document.querySelector('#itemsTable tbody');
+      tbody.innerHTML = '';
+      
+      // Добавляем импортированные строки
+      data.items.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td><textarea class="form-control form-control-sm item-name" required rows="2" style="resize: vertical; min-height: 38px;">${item.item_name}</textarea></td>
+          <td><textarea class="form-control form-control-sm item-characteristics" rows="2" style="resize: vertical; min-height: 38px;">${item.characteristics}</textarea></td>
+          <td><input type="text" class="form-control form-control-sm item-unit" value="${item.unit}" style="min-width: 120px;"></td>
+          <td><input type="number" class="form-control form-control-sm item-quantity" value="${item.quantity}" min="0"></td>
+          <td><input type="number" class="form-control form-control-sm item-price" value="${item.price}" min="0" step="0.01"></td>
+          <td><button type="button" class="btn btn-outline-danger btn-sm" onclick="removeTableRow(this)" ${index === 0 && data.items.length === 1 ? 'disabled' : ''}><i class="bi bi-trash"></i></button></td>
+        `;
+        tbody.appendChild(row);
+      });
+      
+      rowCounter = data.items.length;
+      window.showToast('✅ Данные из Excel успешно импортированы!', 'success');
+    } else {
+      window.showToast('❌ ' + data.message, 'danger');
+    }
+  })
+  .catch(error => {
+    window.showToast('❌ Ошибка импорта файла', 'danger');
+    console.error('Error:', error);
+  });
+  
+  // Очищаем input
+  fileInput.value = '';
+}
+
+// Обработка отправки формы
+document.getElementById('manualForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  // Получаем кнопку отправки
+  const submitBtn = document.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  
+  // Собираем данные таблицы
+  const rows = document.querySelectorAll('#itemsTable tbody tr');
+  const items = [];
+  
+  rows.forEach(row => {
+    const item = {
+      item_name: row.querySelector('.item-name').value,
+      characteristics: row.querySelector('.item-characteristics').value,
+      unit: row.querySelector('.item-unit').value,
+      quantity: row.querySelector('.item-quantity').value,
+      price: row.querySelector('.item-price').value
+    };
+    if (item.item_name.trim()) {  // Только если есть название
+      items.push(item);
+    }
+  });
+  
+  // Проверяем, что есть хотя бы один элемент
+  if (items.length === 0) {
+    window.showToast('❌ Добавьте хотя бы один товар в таблицу', 'warning');
+    return;
+  }
+  
+  // Показываем индикатор загрузки
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Создание заявки...';
+  
+  // Добавляем индикатор прогресса под кнопкой
+  let progressDiv = document.getElementById('progress-indicator');
+  if (!progressDiv) {
+    progressDiv = document.createElement('div');
+    progressDiv.id = 'progress-indicator';
+    progressDiv.className = 'mt-2 text-center';
+    submitBtn.parentNode.appendChild(progressDiv);
+  }
+  
+  // Показываем этапы обработки
+  let currentStep = 0;
+  const steps = [
+    '📝 Сохранение данных...',
+    '🤖 ИИ-анализ качества заявки...',
+    '📧 Отправка уведомлений...',
+    '✅ Завершение...'
+  ];
+  
+  progressDiv.innerHTML = `<small class="text-muted">${steps[0]}</small>`;
+  
+  const stepInterval = setInterval(() => {
+    currentStep++;
+    if (currentStep < steps.length && !submitBtn.classList.contains('btn-success')) {
+      progressDiv.innerHTML = `<small class="text-muted">${steps[currentStep]}</small>`;
+    }
+  }, 1500);
+  
+  // Отправляем форму
+  const formData = new FormData(this);
+  formData.append('items_data', JSON.stringify(items));
+  
+  fetch('/submit_manual', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Останавливаем интервал
+    clearInterval(stepInterval);
+    
+    if (data.success) {
+      // Обновляем кнопку на успех
+      submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Заявка создана!';
+      submitBtn.classList.remove('btn-primary');
+      submitBtn.classList.add('btn-success');
+      
+      // Обновляем индикатор прогресса
+      progressDiv.innerHTML = '<small class="text-success"><i class="bi bi-check-circle me-1"></i>Заявка успешно создана и проанализирована ИИ!</small>';
+      
+      window.showToast('✅ ' + data.message, 'success');
+      // Перенаправляем на страницу результата с ИИ-анализом
+      setTimeout(() => {
+        if (data.redirect_url) {
+          window.location.href = data.redirect_url;
+        } else {
+          window.location.href = `/track?id=${data.application_id}`;
+        }
+      }, 2000);
+    } else {
+      // Восстанавливаем кнопку при ошибке
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+      progressDiv.innerHTML = '<small class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>Ошибка создания заявки</small>';
+      window.showToast('❌ ' + data.message, 'danger');
+    }
+  })
+  .catch(error => {
+    // Останавливаем интервал
+    clearInterval(stepInterval);
+    
+    // Восстанавливаем кнопку при ошибке
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnText;
+    progressDiv.innerHTML = '<small class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i>Ошибка отправки заявки</small>';
+    window.showToast('❌ Ошибка отправки заявки', 'danger');
+    console.error('Error:', error);
+  });
+});
+
+// Маска для телефона
+document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length >= 1) {
+    value = '+7 (' + value.substring(1, 4) + ') ' + value.substring(4, 7) + '-' + value.substring(7, 9) + '-' + value.substring(9, 11);
+  }
+  e.target.value = value;
+});
+</script>
+
+<style>
+/* Стили для улучшения отображения таблицы */
+#itemsTable {
+  table-layout: auto;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#itemsTable th {
+  background-color: #f8f9fa !important;
+  border: 1px solid #dee2e6;
+  padding: 12px 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#itemsTable td {
+  vertical-align: middle;
+  padding: 8px;
+  border: 1px solid #dee2e6;
+}
+
+#itemsTable .item-name,
+#itemsTable .item-characteristics {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+#itemsTable .item-unit {
+  min-width: 140px;
+  width: 140px;
+}
+
+#itemsTable textarea {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  width: 100%;
+  min-height: 38px;
+}
+
+#itemsTable textarea:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+#itemsTable input[type="text"],
+#itemsTable input[type="number"] {
+  width: 100%;
+  min-height: 38px;
+}
+
+/* Центрирование номера строки */
+#itemsTable td:first-child {
+  text-align: center;
+  font-weight: 600;
+  width: 40px;
+  min-width: 40px;
+}
+
+/* Центрирование кнопок действий */
+#itemsTable td:last-child {
+  text-align: center;
+  width: 50px;
+  min-width: 50px;
+  padding: 8px 4px;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  #itemsTable {
+    font-size: 0.8rem;
+  }
+  
+  #itemsTable th,
+  #itemsTable td {
+    padding: 6px 4px;
+  }
+  
+  #itemsTable .item-unit {
+    min-width: 120px;
+    width: 120px;
+  }
+  
+  #itemsTable th {
+    font-size: 0.75rem;
+    padding: 8px 4px;
+  }
+  
+  #itemsTable td:last-child {
+    width: 45px;
+    min-width: 45px;
+    padding: 6px 2px;
+  }
+}
+
+/* Обеспечиваем горизонтальную прокрутку на очень маленьких экранах */
+.table-responsive {
+  overflow-x: auto;
+}
+</style>
+
+{% endblock %}

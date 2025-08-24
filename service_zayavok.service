@@ -1,0 +1,23 @@
+[Unit]
+Description=Service Zayavok Flask Application
+After=network.target
+
+[Service]
+Type=notify
+User=alex2061
+Group=alex2061
+RuntimeDirectory=gunicorn
+PIDFile=/var/run/gunicorn/service_zayavok.pid
+WorkingDirectory=/opt/project_final
+Environment=PATH=/opt/project_final/venv/bin
+Environment=FLASK_ENV=production
+ExecStart=/opt/project_final/venv/bin/gunicorn --config gunicorn.conf.py app:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
