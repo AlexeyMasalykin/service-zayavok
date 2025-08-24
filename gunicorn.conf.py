@@ -1,5 +1,4 @@
 # Gunicorn configuration file
-import os
 
 # Server socket
 bind = "127.0.0.1:8000"

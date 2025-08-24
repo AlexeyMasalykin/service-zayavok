@@ -220,7 +220,7 @@ def export_word(app_id):
         # Заголовок
         header = doc.add_paragraph()
         header.alignment = 2  # Выравнивание по правому краю
-        header.add_run(f"Директору ГБПОУ НО НМК\n\nВ.Н. Гречко")
+        header.add_run("Директору ГБПОУ НО НМК\n\nВ.Н. Гречко")
         
         doc.add_paragraph()  # Пустая строка
         
@@ -286,7 +286,7 @@ def export_word(app_id):
         try:
             if 'temp_file' in locals():
                 os.unlink(temp_file.name)
-        except:
+        except OSError:
             pass
 
 @manual_bp.route('/download_excel_template')

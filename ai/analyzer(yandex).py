@@ -2,7 +2,6 @@ import os
 import re
 import logging
 import requests
-import uuid
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -33,7 +33,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flask pytest pytest-cov flake8 python-dotenv
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8
     
     - name: Lint with flake8
       run: |
@@ -71,7 +72,7 @@ jobs:
     - name: Run security checks
       run: |
         bandit -r . -f json -o bandit-report.json || echo "Security check completed with warnings"
-        safety check --json --output safety-report.json || echo "Safety check completed with warnings"
+        safety check --json > safety-report.json || echo "Safety check completed with warnings"
     
     - name: Upload security reports
       uses: actions/upload-artifact@v4
@@ -97,7 +98,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flask
+        pip install -r requirements.txt
     
     - name: Build application
       run: |

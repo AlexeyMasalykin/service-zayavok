@@ -1,6 +1,5 @@
 from flask import request, render_template, redirect, url_for, session, send_file
 from datetime import datetime, timedelta
-from db.models import moscow_tz
 from io import BytesIO
 from openpyxl import Workbook
 from app import app
@@ -42,13 +41,15 @@ def admin_panel():
             # Создаем дату в московском времени
             from_date = moscow_tz.localize(datetime.strptime(filters['from_date'], "%Y-%m-%d"))
             query = query.filter(Application.submitted_at >= from_date)
-        except ValueError: pass
+        except ValueError:
+            pass
     if filters['to_date']:
         try:
             # Создаем дату в московском времени + 1 день
             to_date = moscow_tz.localize(datetime.strptime(filters['to_date'], "%Y-%m-%d") + timedelta(days=1))
             query = query.filter(Application.submitted_at < to_date)
-        except ValueError: pass
+        except ValueError:
+            pass
 
     records = query.order_by(Application.submitted_at.desc()).all()
     db_session.close()
@@ -73,12 +74,14 @@ def export_excel():
         try:
             from_date_tz = moscow_tz.localize(datetime.strptime(from_date, "%Y-%m-%d"))
             query = query.filter(Application.submitted_at >= from_date_tz)
-        except: pass
+        except ValueError:
+            pass
     if to_date:
         try:
             to_date_tz = moscow_tz.localize(datetime.strptime(to_date, "%Y-%m-%d") + timedelta(days=1))
             query = query.filter(Application.submitted_at < to_date_tz)
-        except: pass
+        except ValueError:
+            pass
 
     records = query.order_by(Application.submitted_at.desc()).all()
     wb = Workbook()
