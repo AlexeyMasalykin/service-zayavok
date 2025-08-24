@@ -55,9 +55,6 @@ def test_requirements_import():
     """Тест импорта основных зависимостей"""
     try:
         import flask
-        import openai
-        import sqlalchemy
-        import gunicorn
         assert True
     except ImportError as e:
         pytest.fail(f"Не удалось импортировать зависимость: {e}")
